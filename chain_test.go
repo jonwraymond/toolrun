@@ -225,15 +225,15 @@ func TestRunChain_StopsOnError(t *testing.T) {
 	localReg := newMockLocalRegistry()
 	callCount := 0
 
-	localReg.Register("handler-step1", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("handler-step1", func(_ context.Context, _ map[string]any) (any, error) {
 		callCount++
 		return "ok", nil
 	})
-	localReg.Register("handler-step2", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("handler-step2", func(_ context.Context, _ map[string]any) (any, error) {
 		callCount++
 		return nil, errors.New("step2 failed")
 	})
-	localReg.Register("handler-step3", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("handler-step3", func(_ context.Context, _ map[string]any) (any, error) {
 		callCount++
 		return "should not reach", nil
 	})
