@@ -84,14 +84,3 @@ func WrapError(toolID string, backend *toolmodel.ToolBackend, op string, err err
 		Err:     err,
 	}
 }
-
-// newToolError creates a ToolError with the given parameters.
-// This is an internal helper that always creates an error (doesn't check nil).
-func newToolError(toolID string, backend *toolmodel.ToolBackend, op string, err error) *ToolError {
-	return &ToolError{
-		ToolID:  toolID,
-		Backend: backend,
-		Op:      op,
-		Err:     err,
-	}
-}

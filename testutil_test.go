@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"sync"
+	"testing"
 
 	"github.com/jonwraymond/toolindex"
 	"github.com/jonwraymond/toolmodel"
@@ -160,6 +161,13 @@ func newMockIndex() *mockIndex {
 		Tools:           make(map[string]toolmodel.Tool),
 		Backends:        make(map[string][]toolmodel.ToolBackend),
 		DefaultBackends: make(map[string]toolmodel.ToolBackend),
+	}
+}
+
+func mustRegisterTool(t *testing.T, idx *mockIndex, tool toolmodel.Tool, backend toolmodel.ToolBackend) {
+	t.Helper()
+	if err := idx.RegisterTool(tool, backend); err != nil {
+		t.Fatalf("RegisterTool failed: %v", err)
 	}
 }
 
@@ -373,24 +381,10 @@ func testMCPResultJSON(v any) *mcp.CallToolResult {
 	}
 }
 
-// testMCPResultError creates an MCP CallToolResult with IsError set.
-func testMCPResultError(text string) *mcp.CallToolResult {
-	return &mcp.CallToolResult{
-		Content: []mcp.Content{
-			&mcp.TextContent{Text: text},
-		},
-		IsError: true,
-	}
-}
-
 // -----------------------------------------------------------------------------
 // Common Test Errors
 // -----------------------------------------------------------------------------
 
 var (
-	errTest         = errors.New("test error")
-	errExecution    = errors.New("execution error")
-	errNotFound     = errors.New("not found")
-	errValidation   = errors.New("validation failed")
-	errNotSupported = errors.New("not supported")
+	errTest = errors.New("test error")
 )

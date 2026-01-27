@@ -10,7 +10,7 @@ func TestRunStream_ValidatesInput(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")
 	backend := testMCPBackend("server1")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 
 	mockVal := newMockValidator()
 	mockVal.ValidateInputErr = errors.New("input invalid")
@@ -35,7 +35,7 @@ func TestRunStream_MCP(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")
 	backend := testMCPBackend("server1")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 
 	eventChan := make(chan StreamEvent, 1)
 	eventChan <- StreamEvent{Kind: StreamEventDone, ToolID: "mytool"}
@@ -69,7 +69,7 @@ func TestRunStream_Provider(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")
 	backend := testProviderBackend("myprovider", "tool1")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 	idx.DefaultBackends["mytool"] = backend
 
 	eventChan := make(chan StreamEvent, 1)
@@ -100,7 +100,7 @@ func TestRunStream_Local_NotSupported(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")
 	backend := testLocalBackend("myhandler")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
@@ -128,7 +128,7 @@ func TestRunStream_StampsToolID_WhenMissing(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")
 	backend := testMCPBackend("server1")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 
 	// Executor returns events WITHOUT ToolID set
 	eventChan := make(chan StreamEvent, 2)
@@ -162,7 +162,7 @@ func TestRunStream_PreservesExistingToolID(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")
 	backend := testMCPBackend("server1")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 
 	// Executor returns events WITH ToolID already set
 	eventChan := make(chan StreamEvent, 1)
@@ -194,7 +194,7 @@ func TestRunStream_ExecutorNotConfigured(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")
 	backend := testMCPBackend("server1")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 
 	runner := NewRunner(
 		WithIndex(idx),
@@ -212,7 +212,7 @@ func TestRunStream_NilChannel_IsError(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")
 	backend := testMCPBackend("server1")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 
 	// Executor returns (nil, nil) for streaming, which should be treated as an error.
 	mcpExec := newMockMCPExecutor()

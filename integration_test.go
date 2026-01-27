@@ -31,7 +31,7 @@ func TestIntegration_LocalTool_WithValidation(t *testing.T) {
 	}
 
 	backend := testLocalBackend("echo-handler")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 	idx.DefaultBackends["echo"] = backend
 
 	// Create a local registry with the handler
@@ -69,7 +69,7 @@ func TestIntegration_MCPTool_WithNormalization(t *testing.T) {
 
 	tool := testTool("mcp-tool")
 	backend := testMCPBackend("test-server")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 
 	// Mock MCP executor returning structured content
 	mcpExec := newMockMCPExecutor()
@@ -115,19 +115,19 @@ func TestIntegration_Chain_DataPassing(t *testing.T) {
 	// Tool 1: Generate a list
 	tool1 := testTool("generate")
 	backend1 := testLocalBackend("generate-handler")
-	idx.RegisterTool(tool1, backend1)
+	mustRegisterTool(t, idx, tool1, backend1)
 	idx.DefaultBackends["generate"] = backend1
 
 	// Tool 2: Transform the list
 	tool2 := testTool("transform")
 	backend2 := testLocalBackend("transform-handler")
-	idx.RegisterTool(tool2, backend2)
+	mustRegisterTool(t, idx, tool2, backend2)
 	idx.DefaultBackends["transform"] = backend2
 
 	// Tool 3: Summarize
 	tool3 := testTool("summarize")
 	backend3 := testLocalBackend("summarize-handler")
-	idx.RegisterTool(tool3, backend3)
+	mustRegisterTool(t, idx, tool3, backend3)
 	idx.DefaultBackends["summarize"] = backend3
 
 	localReg := newMockLocalRegistry()
@@ -242,7 +242,7 @@ func TestIntegration_CustomBackendSelector(t *testing.T) {
 	mcpBackend := testMCPBackend("server1")
 	localBackend := testLocalBackend("handler1")
 
-	idx.RegisterTool(tool, mcpBackend)
+	mustRegisterTool(t, idx, tool, mcpBackend)
 	idx.Backends["multi-backend"] = []toolmodel.ToolBackend{mcpBackend, localBackend}
 
 	// Custom selector that always picks MCP even when local is available
@@ -281,7 +281,7 @@ func TestIntegration_ErrorPropagation(t *testing.T) {
 
 	tool := testTool("failing-tool")
 	backend := testLocalBackend("failing-handler")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 	idx.DefaultBackends["failing-tool"] = backend
 
 	localReg := newMockLocalRegistry()

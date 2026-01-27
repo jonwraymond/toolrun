@@ -13,7 +13,7 @@ func TestResolveTool_ViaIndex(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")
 	backend := testMCPBackend("server1")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 
 	runner := NewRunner(WithIndex(idx))
 
@@ -37,7 +37,7 @@ func TestResolveTool_ViaIndex_WithAllBackends(t *testing.T) {
 	localBackend := testLocalBackend("handler1")
 
 	// Register same tool with multiple backends
-	idx.RegisterTool(tool, mcpBackend)
+	mustRegisterTool(t, idx, tool, mcpBackend)
 	idx.Backends["mytool"] = append(idx.Backends["mytool"], localBackend)
 
 	runner := NewRunner(WithIndex(idx))
@@ -56,7 +56,7 @@ func TestResolveTool_GetAllBackendsUnexpectedError(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")
 	backend := testMCPBackend("server1")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 	idx.DefaultBackends["mytool"] = backend
 
 	idx.GetAllBackendsErr = errors.New("boom")

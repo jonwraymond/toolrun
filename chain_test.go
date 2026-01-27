@@ -12,7 +12,7 @@ func TestRunChain_SingleStep(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("step1")
 	backend := testLocalBackend("handler1")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 	idx.DefaultBackends["step1"] = backend
 
 	localReg := newMockLocalRegistry()
@@ -59,7 +59,7 @@ func TestRunChain_MultiStep(t *testing.T) {
 	for _, name := range []string{"step1", "step2", "step3"} {
 		tool := testTool(name)
 		backend := testLocalBackend("handler-" + name)
-		idx.RegisterTool(tool, backend)
+		mustRegisterTool(t, idx, tool, backend)
 		idx.DefaultBackends[name] = backend
 	}
 
@@ -115,12 +115,12 @@ func TestRunChain_UsePrevious(t *testing.T) {
 
 	tool1 := testTool("producer")
 	backend1 := testLocalBackend("producer-handler")
-	idx.RegisterTool(tool1, backend1)
+	mustRegisterTool(t, idx, tool1, backend1)
 	idx.DefaultBackends["producer"] = backend1
 
 	tool2 := testTool("consumer")
 	backend2 := testLocalBackend("consumer-handler")
-	idx.RegisterTool(tool2, backend2)
+	mustRegisterTool(t, idx, tool2, backend2)
 	idx.DefaultBackends["consumer"] = backend2
 
 	localReg := newMockLocalRegistry()
@@ -171,7 +171,7 @@ func TestRunChain_UsePrevious_Overwrites(t *testing.T) {
 	for _, name := range []string{"step1", "step2"} {
 		tool := testTool(name)
 		backend := testLocalBackend("handler-" + name)
-		idx.RegisterTool(tool, backend)
+		mustRegisterTool(t, idx, tool, backend)
 		idx.DefaultBackends[name] = backend
 	}
 
@@ -218,7 +218,7 @@ func TestRunChain_StopsOnError(t *testing.T) {
 	for _, name := range []string{"step1", "step2", "step3"} {
 		tool := testTool(name)
 		backend := testLocalBackend("handler-" + name)
-		idx.RegisterTool(tool, backend)
+		mustRegisterTool(t, idx, tool, backend)
 		idx.DefaultBackends[name] = backend
 	}
 
@@ -295,7 +295,7 @@ func TestRunChain_FinalResult(t *testing.T) {
 	for _, name := range []string{"step1", "step2"} {
 		tool := testTool(name)
 		backend := testLocalBackend("handler-" + name)
-		idx.RegisterTool(tool, backend)
+		mustRegisterTool(t, idx, tool, backend)
 		idx.DefaultBackends[name] = backend
 	}
 
@@ -348,7 +348,7 @@ func TestRunChain_UsePrevious_FirstStep_InjectsNil(t *testing.T) {
 
 	tool := testTool("mytool")
 	backend := testLocalBackend("handler")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
@@ -392,7 +392,7 @@ func TestRunChain_BackendInStepResult(t *testing.T) {
 
 	tool := testTool("mytool")
 	backend := testLocalBackend("myhandler")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
@@ -426,7 +426,7 @@ func TestRunChain_BackendInStepResult_OnError(t *testing.T) {
 
 	tool := testTool("mytool")
 	backend := testLocalBackend("myhandler")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()

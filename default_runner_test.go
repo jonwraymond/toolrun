@@ -16,7 +16,7 @@ func TestRun_Success_MCP(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")
 	backend := testMCPBackend("server1")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 
 	mcpExec := newMockMCPExecutor()
 	mcpExec.CallToolResult = testMCPResultStructured(map[string]any{"result": "success"})
@@ -47,7 +47,7 @@ func TestRun_Success_Provider(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")
 	backend := testProviderBackend("myprovider", "tool1")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 	idx.DefaultBackends["mytool"] = backend
 
 	provExec := newMockProviderExecutor()
@@ -73,7 +73,7 @@ func TestRun_Success_Local(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")
 	backend := testLocalBackend("myhandler")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
@@ -101,7 +101,7 @@ func TestRun_InputValidation_Pass(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")
 	backend := testLocalBackend("myhandler")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
@@ -133,7 +133,7 @@ func TestRun_InputValidation_Fail(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")
 	backend := testLocalBackend("myhandler")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 	idx.DefaultBackends["mytool"] = backend
 
 	mockVal := newMockValidator()
@@ -159,7 +159,7 @@ func TestRun_InputValidation_Disabled(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")
 	backend := testLocalBackend("myhandler")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
@@ -191,7 +191,7 @@ func TestRun_OutputValidation_Pass(t *testing.T) {
 	idx := newMockIndex()
 	tool := testToolWithOutputSchema("mytool")
 	backend := testLocalBackend("myhandler")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
@@ -223,7 +223,7 @@ func TestRun_OutputValidation_Fail(t *testing.T) {
 	idx := newMockIndex()
 	tool := testToolWithOutputSchema("mytool")
 	backend := testLocalBackend("myhandler")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
@@ -255,7 +255,7 @@ func TestRun_OutputValidation_Disabled(t *testing.T) {
 	idx := newMockIndex()
 	tool := testToolWithOutputSchema("mytool")
 	backend := testLocalBackend("myhandler")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
@@ -287,7 +287,7 @@ func TestRun_OutputValidation_NoSchema(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool") // No output schema
 	backend := testLocalBackend("myhandler")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
@@ -328,7 +328,7 @@ func TestRun_ExecutionError(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")
 	backend := testMCPBackend("server1")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 
 	mcpExec := newMockMCPExecutor()
 	mcpExec.CallToolErr = errors.New("execution failed")
@@ -353,7 +353,7 @@ func TestRun_ToolErrorContext(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")
 	backend := testMCPBackend("server1")
-	idx.RegisterTool(tool, backend)
+	mustRegisterTool(t, idx, tool, backend)
 
 	mcpExec := newMockMCPExecutor()
 	mcpExec.CallToolErr = errors.New("mcp failed")
