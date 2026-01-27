@@ -117,15 +117,9 @@ Executor contract:
 - Resolution can be injected via `WithToolResolver` and `WithBackendsResolver`
   when you do not want a hard dependency on `toolindex`.
 
-## Version compatibility (current tags)
+## Version compatibility
 
-- `toolmodel`: `v0.1.0`
-- `toolindex`: `v0.1.2`
-- `tooldocs`: `v0.1.2`
-- `toolrun`: `v0.1.1`
-- `toolcode`: `v0.1.1`
-- `toolruntime`: `v0.1.1`
-- `toolsearch`: `v0.1.1`
-- `metatools-mcp`: `v0.1.4`
+See `VERSIONS.md` for the authoritative, auto-generated compatibility matrix.
+
 
 MCP protocol target: `2025-11-25` (via `toolmodel.MCPVersion`).
