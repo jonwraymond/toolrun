@@ -20,6 +20,7 @@ type Runner interface {
 	// Returns the final result and a slice of step results.
 	// Stops on the first error (v1 policy).
 	// If UsePrevious is true for a step, the previous step's Structured result
-	// is injected at args["previous"].
+	// is injected at args["previous"], overwriting any existing value,
+	// even when the previous result is nil.
 	RunChain(ctx context.Context, steps []ChainStep) (RunResult, []StepResult, error)
 }
