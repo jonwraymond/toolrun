@@ -219,10 +219,10 @@ func Example_customBackendSelector() {
 	backends := []toolmodel.ToolBackend{localBackend, providerBackend}
 
 	// Create resolvers
-	toolResolver := func(id string) (*toolmodel.Tool, error) {
+	toolResolver := func(_ string) (*toolmodel.Tool, error) {
 		return &tool, nil
 	}
-	backendsResolver := func(id string) ([]toolmodel.ToolBackend, error) {
+	backendsResolver := func(_ string) ([]toolmodel.ToolBackend, error) {
 		return backends, nil
 	}
 

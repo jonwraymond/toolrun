@@ -151,7 +151,7 @@ func TestWithBackendSelector(t *testing.T) {
 
 func TestWithToolResolver(t *testing.T) {
 	tool := testTool("resolved-tool")
-	resolver := func(id string) (*toolmodel.Tool, error) {
+	resolver := func(_ string) (*toolmodel.Tool, error) {
 		return &tool, nil
 	}
 
@@ -174,7 +174,7 @@ func TestWithBackendsResolver(t *testing.T) {
 	backends := []toolmodel.ToolBackend{
 		testMCPBackend("server1"),
 	}
-	resolver := func(id string) ([]toolmodel.ToolBackend, error) {
+	resolver := func(_ string) ([]toolmodel.ToolBackend, error) {
 		return backends, nil
 	}
 
@@ -212,6 +212,7 @@ func TestNewRunner_Defaults(t *testing.T) {
 }
 
 func TestNewRunner_ImplementsRunner(t *testing.T) {
+	t.Helper()
 	var _ Runner = NewRunner()
 }
 

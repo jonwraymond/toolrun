@@ -77,7 +77,7 @@ func TestRun_Success_Local(t *testing.T) {
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
-	localReg.Register("myhandler", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("myhandler", func(_ context.Context, _ map[string]any) (any, error) {
 		return map[string]any{"result": "from local"}, nil
 	})
 
@@ -105,7 +105,7 @@ func TestRun_InputValidation_Pass(t *testing.T) {
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
-	localReg.Register("myhandler", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("myhandler", func(_ context.Context, _ map[string]any) (any, error) {
 		return "ok", nil
 	})
 
@@ -163,7 +163,7 @@ func TestRun_InputValidation_Disabled(t *testing.T) {
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
-	localReg.Register("myhandler", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("myhandler", func(_ context.Context, _ map[string]any) (any, error) {
 		return "ok", nil
 	})
 
@@ -195,7 +195,7 @@ func TestRun_OutputValidation_Pass(t *testing.T) {
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
-	localReg.Register("myhandler", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("myhandler", func(_ context.Context, _ map[string]any) (any, error) {
 		return map[string]any{"result": "valid"}, nil
 	})
 
@@ -227,7 +227,7 @@ func TestRun_OutputValidation_Fail(t *testing.T) {
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
-	localReg.Register("myhandler", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("myhandler", func(_ context.Context, _ map[string]any) (any, error) {
 		return map[string]any{"result": "invalid"}, nil
 	})
 
@@ -259,7 +259,7 @@ func TestRun_OutputValidation_Disabled(t *testing.T) {
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
-	localReg.Register("myhandler", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("myhandler", func(_ context.Context, _ map[string]any) (any, error) {
 		return "result", nil
 	})
 
@@ -291,7 +291,7 @@ func TestRun_OutputValidation_NoSchema(t *testing.T) {
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
-	localReg.Register("myhandler", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("myhandler", func(_ context.Context, _ map[string]any) (any, error) {
 		return "result", nil
 	})
 

@@ -19,7 +19,7 @@ type resolveResult struct {
 //  1. If Index is configured, try Index.GetTool(id) and Index.GetAllBackends(id)
 //  2. If not found (or Index not configured), try ToolResolver and BackendsResolver
 //  3. Return ErrToolNotFound if all sources fail
-func (r *DefaultRunner) resolveTool(ctx context.Context, toolID string) (*resolveResult, error) {
+func (r *DefaultRunner) resolveTool(_ context.Context, toolID string) (*resolveResult, error) {
 	var tool toolmodel.Tool
 	var backends []toolmodel.ToolBackend
 	var toolFound, backendsFound bool
