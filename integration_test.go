@@ -214,7 +214,7 @@ func TestIntegration_FallbackResolvers(t *testing.T) {
 	}
 
 	localReg := newMockLocalRegistry()
-	localReg.Register("dynamic-handler", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("dynamic-handler", func(_ context.Context, _ map[string]any) (any, error) {
 		return "dynamically resolved", nil
 	})
 
@@ -285,7 +285,7 @@ func TestIntegration_ErrorPropagation(t *testing.T) {
 	idx.DefaultBackends["failing-tool"] = backend
 
 	localReg := newMockLocalRegistry()
-	localReg.Register("failing-handler", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("failing-handler", func(_ context.Context, _ map[string]any) (any, error) {
 		return nil, errors.New("intentional failure")
 	})
 

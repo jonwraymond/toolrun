@@ -16,7 +16,7 @@ func TestRunChain_SingleStep(t *testing.T) {
 	idx.DefaultBackends["step1"] = backend
 
 	localReg := newMockLocalRegistry()
-	localReg.Register("handler1", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("handler1", func(_ context.Context, _ map[string]any) (any, error) {
 		return map[string]any{"step": 1}, nil
 	})
 
