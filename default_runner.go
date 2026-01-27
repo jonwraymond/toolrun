@@ -1,0 +1,192 @@
+package toolrun
+
+import (
+	"context"
+	"errors"
+	"fmt"
+
+	"github.com/jonwraymond/toolmodel"
+)
+
+// DefaultRunner is the standard Runner implementation.
+// It uses the configured Index, resolvers, validators, and executors
+// to resolve, validate, and execute tools.
+type DefaultRunner struct {
+	cfg Config
+}
+
+// NewRunner creates a new DefaultRunner with the given options.
+// By default, validation is enabled for both input and output.
+func NewRunner(opts ...ConfigOption) *DefaultRunner {
+	cfg := Config{
+		ValidateInput:  true, // Default on
+		ValidateOutput: true, // Default on
+	}
+	for _, opt := range opts {
+		opt(&cfg)
+	}
+	cfg.applyDefaults()
+	return &DefaultRunner{cfg: cfg}
+}
+
+// Run executes a single tool and returns the normalized result.
+func (r *DefaultRunner) Run(ctx context.Context, toolID string, args map[string]any) (RunResult, error) {
+	// 1. Resolve tool + backends
+	resolved, err := r.resolveTool(ctx, toolID)
+	if err != nil {
+		return RunResult{}, WrapError(toolID, nil, "resolve", err)
+	}
+
+	// 2. Select backend
+	backend, err := r.selectBackend(resolved.backends)
+	if err != nil {
+		return RunResult{}, WrapError(toolID, nil, "select_backend", err)
+	}
+
+	// 3. Validate input
+	if r.cfg.ValidateInput {
+		if err := r.cfg.Validator.ValidateInput(&resolved.tool, args); err != nil {
+			return RunResult{}, WrapError(toolID, &backend, "validate_input", fmt.Errorf("%w: %v", ErrValidation, err))
+		}
+	}
+
+	// 4. Dispatch
+	dispatchResult, err := r.dispatch(ctx, resolved.tool, backend, args)
+	if err != nil {
+		return RunResult{}, WrapError(toolID, &backend, "execute", fmt.Errorf("%w: %v", ErrExecution, err))
+	}
+
+	// 5. Normalize
+	result := r.normalize(resolved.tool, backend, dispatchResult)
+
+	// 6. Validate output
+	if r.cfg.ValidateOutput {
+		if err := r.cfg.Validator.ValidateOutput(&resolved.tool, result.Structured); err != nil {
+			return RunResult{}, WrapError(toolID, &backend, "validate_output", fmt.Errorf("%w: %v", ErrOutputValidation, err))
+		}
+	}
+
+	return result, nil
+}
+
+// RunStream executes a tool with streaming support.
+func (r *DefaultRunner) RunStream(ctx context.Context, toolID string, args map[string]any) (<-chan StreamEvent, error) {
+	// 1. Resolve tool + backends
+	resolved, err := r.resolveTool(ctx, toolID)
+	if err != nil {
+		return nil, WrapError(toolID, nil, "resolve", err)
+	}
+
+	// 2. Select backend
+	backend, err := r.selectBackend(resolved.backends)
+	if err != nil {
+		return nil, WrapError(toolID, nil, "select_backend", err)
+	}
+
+	// 3. Validate input
+	if r.cfg.ValidateInput {
+		if err := r.cfg.Validator.ValidateInput(&resolved.tool, args); err != nil {
+			return nil, WrapError(toolID, &backend, "validate_input", fmt.Errorf("%w: %v", ErrValidation, err))
+		}
+	}
+
+	// 4. Dispatch stream
+	rawChan, err := r.dispatchStream(ctx, resolved.tool, backend, args)
+	if err != nil {
+		return nil, WrapError(toolID, &backend, "stream", err)
+	}
+	if rawChan == nil {
+		// Guard against executors returning (nil, nil), which would hang callers.
+		return nil, WrapError(toolID, &backend, "stream", ErrStreamNotSupported)
+	}
+
+	// 5. Wrap channel to stamp ToolID on events when missing
+	out := make(chan StreamEvent)
+	go func() {
+		defer close(out)
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case ev, ok := <-rawChan:
+				if !ok {
+					return
+				}
+				if ev.ToolID == "" {
+					ev.ToolID = toolID
+				}
+				select {
+				case out <- ev:
+				case <-ctx.Done():
+					return
+				}
+			}
+		}
+	}()
+	return out, nil
+}
+
+// RunChain executes a sequence of tool steps.
+func (r *DefaultRunner) RunChain(ctx context.Context, steps []ChainStep) (RunResult, []StepResult, error) {
+	if len(steps) == 0 {
+		return RunResult{}, nil, nil
+	}
+
+	var results []StepResult
+	var previous any
+
+	for _, step := range steps {
+		// Build args with previous injection
+		args := r.buildChainArgs(step, previous)
+
+		// Execute the step
+		result, err := r.Run(ctx, step.ToolID, args)
+
+		// Resolve backend for StepResult (we need to resolve again to get it)
+		var backend toolmodel.ToolBackend
+		if err == nil {
+			backend = result.Backend
+		} else {
+			var toolErr *ToolError
+			if errors.As(err, &toolErr) && toolErr.Backend != nil {
+				backend = *toolErr.Backend
+			}
+		}
+
+		stepResult := StepResult{
+			ToolID:  step.ToolID,
+			Backend: backend,
+			Result:  result,
+			Err:     err,
+		}
+		results = append(results, stepResult)
+
+		// Stop on first error (v1 policy)
+		if err != nil {
+			return RunResult{}, results, err
+		}
+
+		// Update previous for next step
+		previous = result.Structured
+	}
+
+	// Return the last successful result
+	lastResult := results[len(results)-1].Result
+	return lastResult, results, nil
+}
+
+// buildChainArgs builds the args map for a chain step.
+// If UsePrevious is true, injects previous result at args["previous"].
+func (r *DefaultRunner) buildChainArgs(step ChainStep, previous any) map[string]any {
+	args := make(map[string]any)
+	for k, v := range step.Args {
+		args[k] = v
+	}
+	if step.UsePrevious {
+		args["previous"] = previous
+	}
+	return args
+}
+
+// Ensure DefaultRunner implements Runner.
+var _ Runner = (*DefaultRunner)(nil)
