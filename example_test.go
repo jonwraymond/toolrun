@@ -117,7 +117,7 @@ func Example_chainExecution() {
 	// Create handlers
 	localReg := newSimpleLocalRegistry()
 
-	localReg.Register("fetch-handler", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("fetch-handler", func(_ context.Context, _ map[string]any) (any, error) {
 		return map[string]any{"data": []string{"item1", "item2", "item3"}}, nil
 	})
 
