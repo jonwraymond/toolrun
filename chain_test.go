@@ -300,10 +300,10 @@ func TestRunChain_FinalResult(t *testing.T) {
 	}
 
 	localReg := newMockLocalRegistry()
-	localReg.Register("handler-step1", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("handler-step1", func(_ context.Context, _ map[string]any) (any, error) {
 		return map[string]any{"step": 1}, nil
 	})
-	localReg.Register("handler-step2", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("handler-step2", func(_ context.Context, _ map[string]any) (any, error) {
 		return map[string]any{"step": 2, "final": true}, nil
 	})
 
@@ -396,7 +396,7 @@ func TestRunChain_BackendInStepResult(t *testing.T) {
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
-	localReg.Register("myhandler", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("myhandler", func(_ context.Context, _ map[string]any) (any, error) {
 		return "ok", nil
 	})
 
@@ -430,7 +430,7 @@ func TestRunChain_BackendInStepResult_OnError(t *testing.T) {
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
-	localReg.Register("myhandler", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("myhandler", func(_ context.Context, _ map[string]any) (any, error) {
 		return nil, errors.New("boom")
 	})
 
