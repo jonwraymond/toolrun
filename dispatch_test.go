@@ -147,7 +147,7 @@ func TestDispatch_Provider_UsesBackendIDs(t *testing.T) {
 
 func TestDispatch_Local(t *testing.T) {
 	localReg := newMockLocalRegistry()
-	localReg.Register("myhandler", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("myhandler", func(_ context.Context, _ map[string]any) (any, error) {
 		return map[string]any{"handled": true}, nil
 	})
 
@@ -190,7 +190,7 @@ func TestDispatch_Local_HandlerNotFound(t *testing.T) {
 
 func TestDispatch_Local_HandlerError(t *testing.T) {
 	localReg := newMockLocalRegistry()
-	localReg.Register("failing", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("failing", func(_ context.Context, _ map[string]any) (any, error) {
 		return nil, errors.New("handler failed")
 	})
 
@@ -208,7 +208,7 @@ func TestDispatch_Local_HandlerError(t *testing.T) {
 func TestDispatch_Local_UsesBackendName(t *testing.T) {
 	called := false
 	localReg := newMockLocalRegistry()
-	localReg.Register("specific-handler", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("specific-handler", func(_ context.Context, _ map[string]any) (any, error) {
 		called = true
 		return "ok", nil
 	})
