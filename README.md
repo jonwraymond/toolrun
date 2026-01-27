@@ -1,15 +1,14 @@
 # toolrun
 
-`toolrun` is the execution layer for MCP-style tools defined in
-`github.com/jonwraymond/toolmodel` and resolved via
-`github.com/jonwraymond/toolindex`.
+`toolrun` is the execution layer for tools defined in `toolmodel` and resolved
+via `toolindex`.
 
 It:
-- Resolves a canonical tool ID to a tool definition and backends
-- Validates inputs and outputs against JSON Schema (on by default)
-- Dispatches across `mcp`, `provider`, and `local` backends
-- Normalizes results into a consistent `RunResult`
-- Supports sequential chains with explicit data passing
+- resolves a canonical tool ID to a tool definition + backends,
+- validates inputs and outputs against JSON Schema (on by default),
+- dispatches across `mcp`, `provider`, and `local` backends,
+- normalizes results into a consistent `RunResult`, and
+- supports sequential chains with explicit data passing.
 
 ## Install
 
@@ -19,18 +18,76 @@ go get github.com/jonwraymond/toolrun
 
 ## Quick start
 
+Define a tool, register it in `toolindex`, and execute it locally:
+
 ```go
-runner := toolrun.NewRunner(
-  toolrun.WithIndex(idx),
-  toolrun.WithMCPExecutor(mcpExec),
+import (
+  "context"
+  "fmt"
+  "log"
+
+  "github.com/jonwraymond/toolindex"
+  "github.com/jonwraymond/toolmodel"
+  "github.com/jonwraymond/toolrun"
+  "github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
-result, err := runner.Run(ctx, "github:get_repo", map[string]any{
-  "owner": "jonwraymond",
-  "repo":  "toolmodel",
+// Minimal LocalRegistry implementation.
+type localMap map[string]toolrun.LocalHandler
+func (m localMap) Get(name string) (toolrun.LocalHandler, bool) {
+  h, ok := m[name]
+  return h, ok
+}
+
+idx := toolindex.NewInMemoryIndex()
+
+t := toolmodel.Tool{
+  Namespace: "math",
+  Tool: mcp.Tool{
+    Name:        "add",
+    Description: "Add two integers",
+    InputSchema: map[string]any{
+      "type": "object",
+      "properties": map[string]any{
+        "a": {"type": "integer"},
+        "b": {"type": "integer"},
+      },
+      "required": []string{"a", "b"},
+    },
+    OutputSchema: map[string]any{
+      "type": "object",
+      "properties": map[string]any{
+        "sum": {"type": "integer"},
+      },
+      "required": []string{"sum"},
+    },
+  },
+}
+
+backend := toolmodel.ToolBackend{
+  Kind:  toolmodel.BackendKindLocal,
+  Local: &toolmodel.LocalBackend{Name: "math.add"},
+}
+_ = idx.RegisterTool(t, backend)
+
+locals := localMap{
+  "math.add": func(ctx context.Context, args map[string]any) (any, error) {
+    a := args["a"].(int)
+    b := args["b"].(int)
+    return map[string]any{"sum": a + b}, nil
+  },
+}
+
+runner := toolrun.NewRunner(
+  toolrun.WithIndex(idx),
+  toolrun.WithLocalRegistry(locals),
+)
+
+result, err := runner.Run(ctx, "math:add", map[string]any{
+  "a": 2,
+  "b": 3,
 })
 if err != nil {
-  // errors include tool ID, backend kind, and operation
   log.Fatal(err)
 }
 
@@ -53,7 +110,19 @@ Executor contract:
 - if `err == nil`, the returned channel must be non-nil
 - events missing `ToolID` are stamped by the runner
 
-## Alignment
+## Integration notes
 
-- MCP protocol target: `2025-11-25` (via `toolmodel.MCPVersion`)
-- Default backend selection: `toolindex.DefaultBackendSelector`
+- Backend selection defaults to `toolindex.DefaultBackendSelector`
+  (`local > provider > mcp`).
+- Resolution can be injected via `WithToolResolver` and `WithBackendsResolver`
+  when you do not want a hard dependency on `toolindex`.
+
+## Version compatibility (current tags)
+
+- `toolmodel`: `v0.1.0`
+- `toolindex`: `v0.1.1`
+- `tooldocs`: `v0.1.1`
+- `toolrun`: `v0.1.0`
+- `toolcode`: `v0.1.0`
+
+MCP protocol target: `2025-11-25` (via `toolmodel.MCPVersion`).
