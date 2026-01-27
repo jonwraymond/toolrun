@@ -126,6 +126,6 @@ Executor contract:
 - `toolcode`: `v0.1.1`
 - `toolruntime`: `v0.1.1`
 - `toolsearch`: `v0.1.1`
-- `metatools-mcp`: `v0.1.3`
+- `metatools-mcp`: `v0.1.4`
 
 MCP protocol target: `2025-11-25` (via `toolmodel.MCPVersion`).
