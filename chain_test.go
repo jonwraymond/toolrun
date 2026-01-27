@@ -68,7 +68,7 @@ func TestRunChain_MultiStep(t *testing.T) {
 
 	for _, name := range []string{"step1", "step2", "step3"} {
 		n := name // capture
-		localReg.Register("handler-"+n, func(_ context.Context, args map[string]any) (any, error) {
+		localReg.Register("handler-"+n, func(_ context.Context, _ map[string]any) (any, error) {
 			callOrder = append(callOrder, n)
 			return map[string]any{"step": n}, nil
 		})
@@ -124,7 +124,7 @@ func TestRunChain_UsePrevious(t *testing.T) {
 	idx.DefaultBackends["consumer"] = backend2
 
 	localReg := newMockLocalRegistry()
-	localReg.Register("producer-handler", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("producer-handler", func(_ context.Context, _ map[string]any) (any, error) {
 		return map[string]any{"produced": "data"}, nil
 	})
 
@@ -176,7 +176,7 @@ func TestRunChain_UsePrevious_Overwrites(t *testing.T) {
 	}
 
 	localReg := newMockLocalRegistry()
-	localReg.Register("handler-step1", func(_ context.Context, args map[string]any) (any, error) {
+	localReg.Register("handler-step1", func(_ context.Context, _ map[string]any) (any, error) {
 		return "first-result", nil
 	})
 
