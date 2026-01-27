@@ -104,7 +104,7 @@ func TestRunStream_Local_NotSupported(t *testing.T) {
 	idx.DefaultBackends["mytool"] = backend
 
 	localReg := newMockLocalRegistry()
-	localReg.Register("myhandler", func(ctx context.Context, args map[string]any) (any, error) {
+	localReg.Register("myhandler", func(_ context.Context, args map[string]any) (any, error) {
 		return "ok", nil
 	})
 

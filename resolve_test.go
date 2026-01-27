@@ -118,10 +118,10 @@ func TestResolveTool_IndexNotFound_FallsBack(t *testing.T) {
 
 	runner := NewRunner(
 		WithIndex(idx),
-		WithToolResolver(func(id string) (*toolmodel.Tool, error) {
+		WithToolResolver(func(_ string) (*toolmodel.Tool, error) {
 			return &tool, nil
 		}),
-		WithBackendsResolver(func(id string) ([]toolmodel.ToolBackend, error) {
+		WithBackendsResolver(func(_ string) ([]toolmodel.ToolBackend, error) {
 			return backends, nil
 		}),
 	)
@@ -150,7 +150,7 @@ func TestResolveTool_NoBackends(t *testing.T) {
 	tool := testTool("no-backends")
 
 	runner := NewRunner(
-		WithToolResolver(func(id string) (*toolmodel.Tool, error) {
+		WithToolResolver(func(_ string) (*toolmodel.Tool, error) {
 			return &tool, nil
 		}),
 		// No backends resolver

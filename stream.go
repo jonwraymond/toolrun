@@ -42,7 +42,7 @@ func (r *DefaultRunner) dispatchStreamMCP(ctx context.Context, tool toolmodel.To
 }
 
 // dispatchStreamProvider executes a tool via a provider with streaming.
-func (r *DefaultRunner) dispatchStreamProvider(ctx context.Context, tool toolmodel.Tool, backend toolmodel.ToolBackend, args map[string]any) (<-chan StreamEvent, error) {
+func (r *DefaultRunner) dispatchStreamProvider(ctx context.Context, _ toolmodel.Tool, backend toolmodel.ToolBackend, args map[string]any) (<-chan StreamEvent, error) {
 	if r.cfg.Provider == nil {
 		return nil, fmt.Errorf("provider executor not configured")
 	}

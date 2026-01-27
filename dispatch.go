@@ -60,7 +60,7 @@ func (r *DefaultRunner) dispatchMCP(ctx context.Context, tool toolmodel.Tool, ba
 }
 
 // dispatchProvider executes a tool via a provider.
-func (r *DefaultRunner) dispatchProvider(ctx context.Context, tool toolmodel.Tool, backend toolmodel.ToolBackend, args map[string]any) (*dispatchResult, error) {
+func (r *DefaultRunner) dispatchProvider(ctx context.Context, _ toolmodel.Tool, backend toolmodel.ToolBackend, args map[string]any) (*dispatchResult, error) {
 	if r.cfg.Provider == nil {
 		return nil, fmt.Errorf("provider executor not configured")
 	}
@@ -80,7 +80,7 @@ func (r *DefaultRunner) dispatchProvider(ctx context.Context, tool toolmodel.Too
 }
 
 // dispatchLocal executes a tool via a local handler.
-func (r *DefaultRunner) dispatchLocal(ctx context.Context, tool toolmodel.Tool, backend toolmodel.ToolBackend, args map[string]any) (*dispatchResult, error) {
+func (r *DefaultRunner) dispatchLocal(ctx context.Context, _ toolmodel.Tool, backend toolmodel.ToolBackend, args map[string]any) (*dispatchResult, error) {
 	if r.cfg.Local == nil {
 		return nil, fmt.Errorf("local registry not configured")
 	}

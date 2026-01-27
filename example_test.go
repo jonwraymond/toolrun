@@ -44,7 +44,7 @@ func Example_basicRun() {
 
 	// Create a local registry with a handler
 	localReg := newSimpleLocalRegistry()
-	localReg.Register("greeter", func(ctx context.Context, args map[string]any) (any, error) {
+	localReg.Register("greeter", func(_ context.Context, args map[string]any) (any, error) {
 		name, _ := args["name"].(string)
 		if name == "" {
 			name = "World"
@@ -117,11 +117,11 @@ func Example_chainExecution() {
 	// Create handlers
 	localReg := newSimpleLocalRegistry()
 
-	localReg.Register("fetch-handler", func(ctx context.Context, args map[string]any) (any, error) {
+	localReg.Register("fetch-handler", func(_ context.Context, args map[string]any) (any, error) {
 		return map[string]any{"data": []string{"item1", "item2", "item3"}}, nil
 	})
 
-	localReg.Register("transform-handler", func(ctx context.Context, args map[string]any) (any, error) {
+	localReg.Register("transform-handler", func(_ context.Context, args map[string]any) (any, error) {
 		prev, _ := args["previous"].(map[string]any)
 		data, _ := prev["data"].([]string)
 		transformed := make([]string, len(data))
@@ -131,7 +131,7 @@ func Example_chainExecution() {
 		return map[string]any{"data": transformed}, nil
 	})
 
-	localReg.Register("store-handler", func(ctx context.Context, args map[string]any) (any, error) {
+	localReg.Register("store-handler", func(_ context.Context, args map[string]any) (any, error) {
 		prev, _ := args["previous"].(map[string]any)
 		data, _ := prev["data"].([]string)
 		return map[string]any{

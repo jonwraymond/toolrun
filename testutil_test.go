@@ -39,7 +39,7 @@ func newMockMCPExecutor() *mockMCPExecutor {
 	return &mockMCPExecutor{}
 }
 
-func (m *mockMCPExecutor) CallTool(ctx context.Context, serverName string, params *mcp.CallToolParams) (*mcp.CallToolResult, error) {
+func (m *mockMCPExecutor) CallTool(_ context.Context, serverName string, params *mcp.CallToolParams) (*mcp.CallToolResult, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.LastServerName = serverName
@@ -48,7 +48,7 @@ func (m *mockMCPExecutor) CallTool(ctx context.Context, serverName string, param
 	return m.CallToolResult, m.CallToolErr
 }
 
-func (m *mockMCPExecutor) CallToolStream(ctx context.Context, serverName string, params *mcp.CallToolParams) (<-chan StreamEvent, error) {
+func (m *mockMCPExecutor) CallToolStream(_ context.Context, serverName string, params *mcp.CallToolParams) (<-chan StreamEvent, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.LastServerName = serverName
@@ -87,7 +87,7 @@ func newMockProviderExecutor() *mockProviderExecutor {
 	return &mockProviderExecutor{}
 }
 
-func (m *mockProviderExecutor) CallTool(ctx context.Context, providerID, toolID string, args map[string]any) (any, error) {
+func (m *mockProviderExecutor) CallTool(_ context.Context, providerID, toolID string, args map[string]any) (any, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.LastProviderID = providerID
@@ -97,7 +97,7 @@ func (m *mockProviderExecutor) CallTool(ctx context.Context, providerID, toolID 
 	return m.CallToolResult, m.CallToolErr
 }
 
-func (m *mockProviderExecutor) CallToolStream(ctx context.Context, providerID, toolID string, args map[string]any) (<-chan StreamEvent, error) {
+func (m *mockProviderExecutor) CallToolStream(_ context.Context, providerID, toolID string, args map[string]any) (<-chan StreamEvent, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.LastProviderID = providerID
@@ -205,7 +205,7 @@ func (m *mockIndex) RegisterToolsFromMCP(serverName string, tools []toolmodel.To
 	return nil
 }
 
-func (m *mockIndex) UnregisterBackend(toolID string, kind toolmodel.BackendKind, backendID string) error {
+func (m *mockIndex) UnregisterBackend(_ string, _ toolmodel.BackendKind, _ string) error {
 	return nil
 }
 
@@ -241,7 +241,7 @@ func (m *mockIndex) GetAllBackends(id string) ([]toolmodel.ToolBackend, error) {
 	return backends, nil
 }
 
-func (m *mockIndex) Search(query string, limit int) ([]toolindex.Summary, error) {
+func (m *mockIndex) Search(_ string, _ int) ([]toolindex.Summary, error) {
 	return nil, nil
 }
 
@@ -269,17 +269,17 @@ func newMockValidator() *mockValidator {
 	return &mockValidator{}
 }
 
-func (m *mockValidator) Validate(schema any, instance any) error {
+func (m *mockValidator) Validate(_ any, _ any) error {
 	m.ValidateCalls++
 	return m.ValidateErr
 }
 
-func (m *mockValidator) ValidateInput(tool *toolmodel.Tool, args any) error {
+func (m *mockValidator) ValidateInput(_ *toolmodel.Tool, _ any) error {
 	m.ValidateInputCalls++
 	return m.ValidateInputErr
 }
 
-func (m *mockValidator) ValidateOutput(tool *toolmodel.Tool, result any) error {
+func (m *mockValidator) ValidateOutput(_ *toolmodel.Tool, _ any) error {
 	m.OutputCalls++
 	return m.ValidateOutputErr
 }

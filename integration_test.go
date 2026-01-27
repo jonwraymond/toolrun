@@ -36,7 +36,7 @@ func TestIntegration_LocalTool_WithValidation(t *testing.T) {
 
 	// Create a local registry with the handler
 	localReg := newMockLocalRegistry()
-	localReg.Register("echo-handler", func(ctx context.Context, args map[string]any) (any, error) {
+	localReg.Register("echo-handler", func(_ context.Context, args map[string]any) (any, error) {
 		msg, _ := args["message"].(string)
 		return map[string]any{"echoed": msg}, nil
 	})
@@ -132,7 +132,7 @@ func TestIntegration_Chain_DataPassing(t *testing.T) {
 
 	localReg := newMockLocalRegistry()
 
-	localReg.Register("generate-handler", func(ctx context.Context, args map[string]any) (any, error) {
+	localReg.Register("generate-handler", func(_ context.Context, args map[string]any) (any, error) {
 		count, _ := args["count"].(float64)
 		items := make([]string, int(count))
 		for i := range items {
@@ -141,7 +141,7 @@ func TestIntegration_Chain_DataPassing(t *testing.T) {
 		return map[string]any{"items": items}, nil
 	})
 
-	localReg.Register("transform-handler", func(ctx context.Context, args map[string]any) (any, error) {
+	localReg.Register("transform-handler", func(_ context.Context, args map[string]any) (any, error) {
 		prev, _ := args["previous"].(map[string]any)
 		items, _ := prev["items"].([]string)
 
@@ -153,7 +153,7 @@ func TestIntegration_Chain_DataPassing(t *testing.T) {
 		return map[string]any{"items": transformed}, nil
 	})
 
-	localReg.Register("summarize-handler", func(ctx context.Context, args map[string]any) (any, error) {
+	localReg.Register("summarize-handler", func(_ context.Context, args map[string]any) (any, error) {
 		prev, _ := args["previous"].(map[string]any)
 		items, _ := prev["items"].([]string)
 		return map[string]any{
@@ -214,7 +214,7 @@ func TestIntegration_FallbackResolvers(t *testing.T) {
 	}
 
 	localReg := newMockLocalRegistry()
-	localReg.Register("dynamic-handler", func(ctx context.Context, args map[string]any) (any, error) {
+	localReg.Register("dynamic-handler", func(_ context.Context, args map[string]any) (any, error) {
 		return "dynamically resolved", nil
 	})
 
@@ -285,7 +285,7 @@ func TestIntegration_ErrorPropagation(t *testing.T) {
 	idx.DefaultBackends["failing-tool"] = backend
 
 	localReg := newMockLocalRegistry()
-	localReg.Register("failing-handler", func(ctx context.Context, args map[string]any) (any, error) {
+	localReg.Register("failing-handler", func(_ context.Context, args map[string]any) (any, error) {
 		return nil, errors.New("intentional failure")
 	})
 
