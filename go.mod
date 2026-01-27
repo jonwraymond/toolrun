@@ -3,8 +3,8 @@ module github.com/jonwraymond/toolrun
 go 1.24.4
 
 require (
-	github.com/jonwraymond/toolindex v0.1.4
-	github.com/jonwraymond/toolmodel v0.1.1
+	github.com/jonwraymond/toolindex v0.1.5
+	github.com/jonwraymond/toolmodel v0.1.2
 	github.com/modelcontextprotocol/go-sdk v1.2.0
 )
 
