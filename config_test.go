@@ -14,9 +14,6 @@ func TestConfig_ApplyDefaults_Validator(t *testing.T) {
 	if cfg.Validator == nil {
 		t.Error("applyDefaults() should set Validator to non-nil")
 	}
-
-	// Verify it's the default validator by checking it implements the interface
-	var _ toolmodel.SchemaValidator = cfg.Validator
 }
 
 func TestConfig_ApplyDefaults_ValidateInput(t *testing.T) {
