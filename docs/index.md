@@ -4,12 +4,12 @@
 inputs/outputs against JSON Schema, dispatches to the correct executor, and
 normalizes results.
 
-## What this library provides
+## Key APIs
 
-- `Runner` interface for run, stream, and chain execution
-- Default runner with validation hooks
-- Backend dispatch (mcp, provider, local)
-- Consistent error wrapping
+- `Runner` interface
+- `DefaultRunner` (via `NewRunner`)
+- `Run`, `RunStream`, `RunChain`
+- `ChainStep`, `RunResult`, `StreamEvent`
 
 ## Quickstart
 
@@ -27,4 +27,4 @@ res, _ := runner.Run(ctx, "github:get_repo", map[string]any{"owner": "o", "repo"
 
 - Execution pipeline: `architecture.md`
 - Configuration and options: `usage.md`
-- Examples and chains: `examples.md`
+- Examples: `examples.md`
