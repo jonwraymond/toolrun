@@ -1,15 +1,30 @@
 # toolrun
 
-Execution and chaining layer for tools.
+`toolrun` executes tools and chains. It resolves tools/backends, validates
+inputs/outputs against JSON Schema, dispatches to the correct executor, and
+normalizes results.
 
-## What this repo provides
+## What this library provides
 
-- Run a tool by ID
-- Run tool chains with step results
-- Schema validation hooks
+- `Runner` interface for run, stream, and chain execution
+- Default runner with validation hooks
+- Backend dispatch (mcp, provider, local)
+- Consistent error wrapping
 
-## Example
+## Quickstart
 
 ```go
-result, _ := runner.Run(ctx, "github:get_repo", args)
+runner := toolrun.NewRunner(
+  toolrun.WithIndex(idx),
+  toolrun.WithMCPExecutor(mcpExec),
+  toolrun.WithLocalRegistry(localRegistry),
+)
+
+res, _ := runner.Run(ctx, "github:get_repo", map[string]any{"owner": "o", "repo": "r"})
 ```
+
+## Next
+
+- Execution pipeline: `architecture.md`
+- Configuration and options: `usage.md`
+- Examples and chains: `examples.md`
