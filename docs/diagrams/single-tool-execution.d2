@@ -1,0 +1,14 @@
+direction: right
+
+Run -> "Resolve tool + backends" -> "Select backend" -> "Validate input" -> Dispatch -> "Normalize result" -> "Validate output"
+
+Dispatch: {
+  label: "Dispatch"
+  MCP
+  Provider
+  Local
+}
+
+Dispatch -> MCP
+Dispatch -> Provider
+Dispatch -> Local

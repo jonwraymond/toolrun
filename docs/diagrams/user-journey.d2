@@ -1,0 +1,26 @@
+direction: down
+
+style: { font-size: 14 }
+
+agent: "Agent" { shape: oval }
+
+metatools: "metatools-mcp" {
+  shape: hexagon
+}
+
+index: "toolindex" { shape: cylinder }
+
+runner: "toolrun" {
+  shape: step
+  style: { shadow: true }
+}
+
+backend: "MCP Server" { shape: cloud }
+
+agent -> metatools: "run_tool(tool_id, args)"
+metatools -> runner: "Run"
+runner -> index: "Resolve tool + backend"
+runner -> backend: "Call tool"
+backend -> runner: "Result"
+runner -> metatools: "Structured result"
+metatools -> agent: "Tool output"

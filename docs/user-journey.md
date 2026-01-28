@@ -4,22 +4,7 @@ This journey shows how `toolrun` executes tools and chains in a full end-to-end 
 
 ## End-to-end flow (stack view)
 
-```mermaid
-sequenceDiagram
-  participant Agent
-  participant MCP as metatools-mcp
-  participant Index as toolindex
-  participant Runner as toolrun
-  participant Backend as MCP Server
-
-  Agent->>MCP: run_tool(tool_id, args)
-  MCP->>Runner: Run
-  Runner->>Index: Resolve tool + backend
-  Runner->>Backend: Call tool
-  Backend-->>Runner: Result
-  Runner-->>MCP: Structured result
-  MCP-->>Agent: Tool output
-```
+![Diagram](assets/diagrams/user-journey.svg)
 
 ## Step-by-step
 
