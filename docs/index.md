@@ -4,6 +4,12 @@
 inputs/outputs against JSON Schema, dispatches to the correct executor, and
 normalizes results.
 
+[![Docs](https://img.shields.io/badge/docs-ai--tools--stack-blue)](https://jonwraymond.github.io/ai-tools-stack/)
+
+## Deep dives
+- Design Notes: `design-notes.md`
+- User Journey: `user-journey.md`
+
 ## Motivation
 
 - **Consistent execution** across MCP, provider, and local tools
@@ -43,6 +49,3 @@ res, _ := runner.Run(ctx, "github:get_repo", map[string]any{"owner": "o", "repo"
 - Design Notes: `design-notes.md`
 - User Journey: `user-journey.md`
 
-!!! note "Deep dives"
-    - Design Notes: `design-notes.md`
-    - User Journey: `user-journey.md`
