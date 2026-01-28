@@ -42,3 +42,7 @@ res, _ := runner.Run(ctx, "github:get_repo", map[string]any{"owner": "o", "repo"
 - Examples: `examples.md`
 - Design Notes: `design-notes.md`
 - User Journey: `user-journey.md`
+
+!!! note "Deep dives"
+    - Design Notes: `design-notes.md`
+    - User Journey: `user-journey.md`

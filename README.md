@@ -1,5 +1,7 @@
 # toolrun
 
+[![Docs](https://img.shields.io/badge/docs-ai--tools--stack-blue)](https://jonwraymond.github.io/ai-tools-stack/)
+
 `toolrun` is the execution layer for tools defined in `toolmodel` and resolved
 via `toolindex`.
 
