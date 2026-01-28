@@ -4,6 +4,12 @@
 inputs/outputs against JSON Schema, dispatches to the correct executor, and
 normalizes results.
 
+## Motivation
+
+- **Consistent execution** across MCP, provider, and local tools
+- **Safety** via schema validation and normalized results
+- **Usability** with clear error wrapping and chain semantics
+
 ## Key APIs
 
 - `Runner` interface
@@ -22,6 +28,12 @@ runner := toolrun.NewRunner(
 
 res, _ := runner.Run(ctx, "github:get_repo", map[string]any{"owner": "o", "repo": "r"})
 ```
+
+## Usability notes
+
+- Backend selection is deterministic by default
+- Chain steps can inject `previous` results
+- Streaming is optional; non-streaming backends return `ErrStreamNotSupported`
 
 ## Next
 
