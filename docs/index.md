@@ -40,3 +40,5 @@ res, _ := runner.Run(ctx, "github:get_repo", map[string]any{"owner": "o", "repo"
 - Execution pipeline: `architecture.md`
 - Configuration and options: `usage.md`
 - Examples: `examples.md`
+- Design Notes: `design-notes.md`
+- User Journey: `user-journey.md`
