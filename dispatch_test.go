@@ -188,6 +188,21 @@ func TestDispatch_Local_HandlerNotFound(t *testing.T) {
 	}
 }
 
+func TestDispatch_Local_HandlerNil(t *testing.T) {
+	localReg := newMockLocalRegistry()
+	localReg.handlers["nil-handler"] = nil
+
+	runner := NewRunner(WithLocalRegistry(localReg))
+
+	tool := testTool("mytool")
+	backend := testLocalBackend("nil-handler")
+
+	_, err := runner.dispatch(context.Background(), tool, backend, nil)
+	if err == nil {
+		t.Error("dispatch() should return error when handler is nil")
+	}
+}
+
 func TestDispatch_Local_HandlerError(t *testing.T) {
 	localReg := newMockLocalRegistry()
 	localReg.Register("failing", func(_ context.Context, _ map[string]any) (any, error) {

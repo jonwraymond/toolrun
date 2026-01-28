@@ -90,7 +90,7 @@ func (r *DefaultRunner) dispatchLocal(ctx context.Context, _ toolmodel.Tool, bac
 	}
 
 	handler, ok := r.cfg.Local.Get(backend.Local.Name)
-	if !ok {
+	if !ok || handler == nil {
 		return nil, fmt.Errorf("local handler %q not found", backend.Local.Name)
 	}
 

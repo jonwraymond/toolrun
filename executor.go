@@ -32,10 +32,12 @@ type ProviderExecutor interface {
 
 // LocalHandler is the function signature for local tool execution.
 // It receives a context and arguments, and returns a result or error.
+// Implementations must be non-nil when returned by LocalRegistry.Get.
 type LocalHandler func(ctx context.Context, args map[string]any) (any, error)
 
 // LocalRegistry resolves local handlers by name.
 // Implementations provide a mapping from handler names to LocalHandler functions.
+// Get should return (nil, false) when a handler is not found.
 type LocalRegistry interface {
 	// Get returns the handler for the given name, or false if not found.
 	Get(name string) (LocalHandler, bool)
