@@ -31,6 +31,9 @@ func NewRunner(opts ...ConfigOption) *DefaultRunner {
 
 // Run executes a single tool and returns the normalized result.
 func (r *DefaultRunner) Run(ctx context.Context, toolID string, args map[string]any) (RunResult, error) {
+	if toolID == "" {
+		return RunResult{}, WrapError(toolID, nil, "validate_tool_id", ErrInvalidToolID)
+	}
 	// 1. Resolve tool + backends
 	resolved, err := r.resolveTool(ctx, toolID)
 	if err != nil {
@@ -71,6 +74,9 @@ func (r *DefaultRunner) Run(ctx context.Context, toolID string, args map[string]
 
 // RunStream executes a tool with streaming support.
 func (r *DefaultRunner) RunStream(ctx context.Context, toolID string, args map[string]any) (<-chan StreamEvent, error) {
+	if toolID == "" {
+		return nil, WrapError(toolID, nil, "validate_tool_id", ErrInvalidToolID)
+	}
 	// 1. Resolve tool + backends
 	resolved, err := r.resolveTool(ctx, toolID)
 	if err != nil {

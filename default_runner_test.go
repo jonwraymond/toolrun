@@ -43,6 +43,18 @@ func TestRun_Success_MCP(t *testing.T) {
 	}
 }
 
+func TestRun_EmptyToolID(t *testing.T) {
+	runner := NewRunner(WithIndex(newMockIndex()))
+
+	_, err := runner.Run(context.Background(), "", map[string]any{"input": "value"})
+	if err == nil {
+		t.Fatal("Run() should fail when toolID is empty")
+	}
+	if !errors.Is(err, ErrInvalidToolID) {
+		t.Errorf("Run() error = %v, want ErrInvalidToolID", err)
+	}
+}
+
 func TestRun_Success_Provider(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")

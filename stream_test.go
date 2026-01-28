@@ -31,6 +31,18 @@ func TestRunStream_ValidatesInput(t *testing.T) {
 	}
 }
 
+func TestRunStream_EmptyToolID(t *testing.T) {
+	runner := NewRunner(WithIndex(newMockIndex()))
+
+	_, err := runner.RunStream(context.Background(), "", nil)
+	if err == nil {
+		t.Fatal("RunStream() should fail when toolID is empty")
+	}
+	if !errors.Is(err, ErrInvalidToolID) {
+		t.Errorf("RunStream() error = %v, want ErrInvalidToolID", err)
+	}
+}
+
 func TestRunStream_MCP(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")

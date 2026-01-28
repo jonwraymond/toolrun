@@ -13,6 +13,9 @@ var (
 	// ErrToolNotFound is returned when a tool cannot be resolved.
 	ErrToolNotFound = errors.New("tool not found")
 
+	// ErrInvalidToolID is returned when a tool ID is empty or malformed.
+	ErrInvalidToolID = errors.New("invalid tool id")
+
 	// ErrNoBackends is returned when a tool has no available backends.
 	ErrNoBackends = errors.New("no backends available")
 
