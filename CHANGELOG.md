@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.0](https://github.com/jonwraymond/toolrun/compare/toolrun-v0.2.0...toolrun-v0.3.0) (2026-01-29)
+
+
+### Features
+
+* add progress callbacks and clarify cancellation ([0901636](https://github.com/jonwraymond/toolrun/commit/09016365e4e3fb73a048e2fca564a5e13c414026))
+* **mcp:** add context cancellation propagation ([ab5580d](https://github.com/jonwraymond/toolrun/commit/ab5580d4517e5b7ec09a7d339a0392e1edda1e08))
+* **mcp:** add context cancellation propagation ([55b51c5](https://github.com/jonwraymond/toolrun/commit/55b51c5348200092cc93f26cbd14e020d15ba3fd))
+
 ## [Unreleased]
 
 ### Added
