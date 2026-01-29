@@ -43,6 +43,35 @@ func TestRunStream_EmptyToolID(t *testing.T) {
 	}
 }
 
+func TestRunStream_ContextCancelled_BeforeExecution(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	idx := newMockIndex()
+	tool := testTool("mytool")
+	backend := testMCPBackend("server1")
+	mustRegisterTool(t, idx, tool, backend)
+
+	mcpExec := newMockMCPExecutor()
+
+	runner := NewRunner(
+		WithIndex(idx),
+		WithMCPExecutor(mcpExec),
+		WithValidation(false, false),
+	)
+
+	_, err := runner.RunStream(ctx, "mytool", nil)
+	if err == nil {
+		t.Fatal("RunStream() should return error when context is cancelled")
+	}
+	if !errors.Is(err, context.Canceled) {
+		t.Errorf("RunStream() error = %v, want context.Canceled", err)
+	}
+	if mcpExec.CallCount != 0 {
+		t.Errorf("RunStream() should not invoke executor when context is cancelled")
+	}
+}
+
 func TestRunStream_MCP(t *testing.T) {
 	idx := newMockIndex()
 	tool := testTool("mytool")

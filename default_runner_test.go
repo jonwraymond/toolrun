@@ -199,6 +199,41 @@ func TestRun_InputValidation_Disabled(t *testing.T) {
 	}
 }
 
+func TestRun_ContextCancelled_BeforeExecution(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	idx := newMockIndex()
+	tool := testTool("mytool")
+	backend := testLocalBackend("myhandler")
+	mustRegisterTool(t, idx, tool, backend)
+	idx.DefaultBackends["mytool"] = backend
+
+	called := false
+	localReg := newMockLocalRegistry()
+	localReg.Register("myhandler", func(_ context.Context, _ map[string]any) (any, error) {
+		called = true
+		return map[string]any{"result": "ok"}, nil
+	})
+
+	runner := NewRunner(
+		WithIndex(idx),
+		WithLocalRegistry(localReg),
+		WithValidation(false, false),
+	)
+
+	_, err := runner.Run(ctx, "mytool", nil)
+	if err == nil {
+		t.Fatal("Run() should return error when context is cancelled")
+	}
+	if !errors.Is(err, context.Canceled) {
+		t.Errorf("Run() error = %v, want context.Canceled", err)
+	}
+	if called {
+		t.Error("Run() should not invoke handler when context is cancelled")
+	}
+}
+
 func TestRun_OutputValidation_Pass(t *testing.T) {
 	idx := newMockIndex()
 	tool := testToolWithOutputSchema("mytool")

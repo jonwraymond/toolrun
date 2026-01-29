@@ -31,6 +31,9 @@ func NewRunner(opts ...ConfigOption) *DefaultRunner {
 
 // Run executes a single tool and returns the normalized result.
 func (r *DefaultRunner) Run(ctx context.Context, toolID string, args map[string]any) (RunResult, error) {
+	if err := ctx.Err(); err != nil {
+		return RunResult{}, err
+	}
 	if toolID == "" {
 		return RunResult{}, WrapError(toolID, nil, "validate_tool_id", ErrInvalidToolID)
 	}
@@ -74,6 +77,9 @@ func (r *DefaultRunner) Run(ctx context.Context, toolID string, args map[string]
 
 // RunStream executes a tool with streaming support.
 func (r *DefaultRunner) RunStream(ctx context.Context, toolID string, args map[string]any) (<-chan StreamEvent, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	if toolID == "" {
 		return nil, WrapError(toolID, nil, "validate_tool_id", ErrInvalidToolID)
 	}
@@ -142,6 +148,9 @@ func (r *DefaultRunner) RunChain(ctx context.Context, steps []ChainStep) (RunRes
 	var previous any
 
 	for _, step := range steps {
+		if err := ctx.Err(); err != nil {
+			return RunResult{}, results, err
+		}
 		// Build args with previous injection
 		args := r.buildChainArgs(step, previous)
 
