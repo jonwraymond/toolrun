@@ -7,8 +7,8 @@ normalizes results.
 [![Docs](https://img.shields.io/badge/docs-ai--tools--stack-blue)](https://jonwraymond.github.io/ai-tools-stack/)
 
 ## Deep dives
-- Design Notes: `design-notes.md`
-- User Journey: `user-journey.md`
+- Design Notes: [design-notes.md](design-notes.md)
+- User Journey: [user-journey.md](user-journey.md)
 
 ## Motivation
 
@@ -46,6 +46,6 @@ res, _ := runner.Run(ctx, "github:get_repo", map[string]any{"owner": "o", "repo"
 - Execution pipeline: `architecture.md`
 - Configuration and options: `usage.md`
 - Examples: `examples.md`
-- Design Notes: `design-notes.md`
-- User Journey: `user-journey.md`
+- Design Notes: [design-notes.md](design-notes.md)
+- User Journey: [user-journey.md](user-journey.md)
 
