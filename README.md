@@ -18,6 +18,10 @@ It:
 go get github.com/jonwraymond/toolrun
 ```
 
+## Changelog
+
+See `CHANGELOG.md` for release notes.
+
 ## Quick start
 
 Define a tool, register it in `toolindex`, and execute it locally:
@@ -102,6 +106,8 @@ fmt.Println(result.Structured)
 
 When `usePrevious` is true, the prior step's structured result is injected at
 `args["previous"]` (even when the prior result is nil).
+
+All runner methods honor `context.Context` cancellation and timeouts.
 
 ## Streaming contract
 

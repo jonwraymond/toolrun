@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- Context cancellation checks for `Run`, `RunChain`, and tool resolution.
+- Tests covering cancellation behavior between chain steps and before execution.
+
 ## [0.2.0](https://github.com/jonwraymond/toolrun/compare/toolrun-v0.1.10...toolrun-v0.2.0) (2026-01-28)
 
 
