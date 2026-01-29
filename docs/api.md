@@ -8,6 +8,14 @@ type Runner interface {
   RunStream(ctx context.Context, toolID string, args map[string]any) (<-chan StreamEvent, error)
   RunChain(ctx context.Context, steps []ChainStep) (RunResult, []StepResult, error)
 }
+
+// Optional progress interface
+type ProgressRunner interface {
+  RunWithProgress(ctx context.Context, toolID string, args map[string]any, onProgress ProgressCallback) (RunResult, error)
+  RunChainWithProgress(ctx context.Context, steps []ChainStep, onProgress ProgressCallback) (RunResult, []StepResult, error)
+}
+
+type ProgressCallback func(ProgressEvent)
 ```
 
 ## Config

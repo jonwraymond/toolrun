@@ -107,7 +107,9 @@ fmt.Println(result.Structured)
 When `usePrevious` is true, the prior step's structured result is injected at
 `args["previous"]` (even when the prior result is nil).
 
-All runner methods honor `context.Context` cancellation and timeouts.
+All runner methods check `context.Context` and pass it through to backends.
+Cancellation/timeout behavior ultimately depends on backend support (local
+handlers, MCP servers, or provider executors must respect the context).
 
 ## Streaming contract
 

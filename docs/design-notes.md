@@ -9,7 +9,8 @@ This page documents the key tradeoffs and error semantics behind `toolrun`.
 - **Validation on by default.** Input and output validation is enabled by default to catch schema errors early. This trades a small amount of latency for correctness and safety.
 - **Strict chaining policy.** Chains stop on the first error (v1) and inject previous results at `args["previous"]` when requested. This is deterministic and easy to reason about, but not a branching workflow engine.
 - **Structured-first results.** For MCP backends, `StructuredContent` is preferred; otherwise text content is best-effort parsed as JSON. This avoids losing structure while preserving fallback behavior.
-- **Context-aware execution.** All public runner methods honor `context.Context` to allow cancellation and timeouts to propagate to backends.
+- **Context-aware execution.** Runner methods check `context.Context` and pass it to backends; full cancellation depends on backend support.
+- **Optional progress callbacks.** `ProgressRunner` provides coarse progress updates for chains and long-running tools without changing the core `Runner` API.
 
 ## Error semantics
 

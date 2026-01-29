@@ -24,3 +24,17 @@ type Runner interface {
 	// even when the previous result is nil.
 	RunChain(ctx context.Context, steps []ChainStep) (RunResult, []StepResult, error)
 }
+
+// ProgressCallback receives progress updates during execution.
+// Implementations should be fast and non-blocking.
+type ProgressCallback func(ProgressEvent)
+
+// ProgressRunner is an optional interface that provides progress callbacks
+// for long-running tool executions and chains.
+type ProgressRunner interface {
+	// RunWithProgress executes a single tool and emits progress updates.
+	RunWithProgress(ctx context.Context, toolID string, args map[string]any, onProgress ProgressCallback) (RunResult, error)
+
+	// RunChainWithProgress executes a chain and emits progress updates.
+	RunChainWithProgress(ctx context.Context, steps []ChainStep, onProgress ProgressCallback) (RunResult, []StepResult, error)
+}

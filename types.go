@@ -43,6 +43,15 @@ type StreamEvent struct {
 	Err error `json:"-"`
 }
 
+// ProgressEvent represents coarse-grained progress during execution.
+// Progress and Total are optional; when Total is zero, Progress should be treated
+// as a best-effort signal rather than a precise fraction.
+type ProgressEvent struct {
+	Progress float64 `json:"progress"`
+	Total    float64 `json:"total,omitempty"`
+	Message  string  `json:"message,omitempty"`
+}
+
 // ChainStep defines one step in a sequential chain.
 // Chains execute steps in order, with optional data passing between steps.
 type ChainStep struct {

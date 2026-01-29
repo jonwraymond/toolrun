@@ -75,6 +75,25 @@ func (r *DefaultRunner) Run(ctx context.Context, toolID string, args map[string]
 	return result, nil
 }
 
+// RunWithProgress executes a tool and emits coarse progress updates.
+func (r *DefaultRunner) RunWithProgress(ctx context.Context, toolID string, args map[string]any, onProgress ProgressCallback) (RunResult, error) {
+	if onProgress != nil {
+		onProgress(ProgressEvent{Progress: 0, Total: 1, Message: "started"})
+	}
+
+	result, err := r.Run(ctx, toolID, args)
+
+	if onProgress != nil {
+		msg := "completed"
+		if err != nil {
+			msg = "error"
+		}
+		onProgress(ProgressEvent{Progress: 1, Total: 1, Message: msg})
+	}
+
+	return result, err
+}
+
 // RunStream executes a tool with streaming support.
 func (r *DefaultRunner) RunStream(ctx context.Context, toolID string, args map[string]any) (<-chan StreamEvent, error) {
 	if err := ctx.Err(); err != nil {
@@ -140,14 +159,27 @@ func (r *DefaultRunner) RunStream(ctx context.Context, toolID string, args map[s
 
 // RunChain executes a sequence of tool steps.
 func (r *DefaultRunner) RunChain(ctx context.Context, steps []ChainStep) (RunResult, []StepResult, error) {
+	return r.runChainWithProgress(ctx, steps, nil)
+}
+
+// RunChainWithProgress executes a chain and emits progress updates.
+func (r *DefaultRunner) RunChainWithProgress(ctx context.Context, steps []ChainStep, onProgress ProgressCallback) (RunResult, []StepResult, error) {
+	return r.runChainWithProgress(ctx, steps, onProgress)
+}
+
+func (r *DefaultRunner) runChainWithProgress(ctx context.Context, steps []ChainStep, onProgress ProgressCallback) (RunResult, []StepResult, error) {
 	if len(steps) == 0 {
 		return RunResult{}, nil, nil
+	}
+
+	if onProgress != nil {
+		onProgress(ProgressEvent{Progress: 0, Total: float64(len(steps)), Message: "started"})
 	}
 
 	var results []StepResult
 	var previous any
 
-	for _, step := range steps {
+	for i, step := range steps {
 		if err := ctx.Err(); err != nil {
 			return RunResult{}, results, err
 		}
@@ -175,6 +207,18 @@ func (r *DefaultRunner) RunChain(ctx context.Context, steps []ChainStep) (RunRes
 			Err:     err,
 		}
 		results = append(results, stepResult)
+
+		if onProgress != nil {
+			msg := "step_completed"
+			if err != nil {
+				msg = "step_error"
+			}
+			onProgress(ProgressEvent{
+				Progress: float64(i + 1),
+				Total:    float64(len(steps)),
+				Message:  msg,
+			})
+		}
 
 		// Stop on first error (v1 policy)
 		if err != nil {
