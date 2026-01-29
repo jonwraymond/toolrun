@@ -273,6 +273,60 @@ func TestRunChain_StopsOnError(t *testing.T) {
 	}
 }
 
+func TestRunChain_ContextCancelled_BetweenSteps(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	idx := newMockIndex()
+	tool1 := testTool("step1")
+	tool2 := testTool("step2")
+	backend := testLocalBackend("handler")
+	mustRegisterTool(t, idx, tool1, backend)
+	mustRegisterTool(t, idx, tool2, backend)
+	idx.DefaultBackends["step1"] = backend
+	idx.DefaultBackends["step2"] = backend
+
+	step2Called := make(chan struct{}, 1)
+
+	localReg := newMockLocalRegistry()
+	localReg.Register("handler", func(_ context.Context, args map[string]any) (any, error) {
+		if args["step"] == "one" {
+			cancel()
+			return map[string]any{"step": "one"}, nil
+		}
+		step2Called <- struct{}{}
+		return map[string]any{"step": "two"}, nil
+	})
+
+	runner := NewRunner(
+		WithIndex(idx),
+		WithLocalRegistry(localReg),
+		WithValidation(false, false),
+	)
+
+	errCh := make(chan error, 1)
+	go func() {
+		_, _, err := runner.RunChain(ctx, []ChainStep{
+			{ToolID: "step1", Args: map[string]any{"step": "one"}},
+			{ToolID: "step2", Args: map[string]any{"step": "two"}},
+		})
+		errCh <- err
+	}()
+
+	err := <-errCh
+	if err == nil {
+		t.Fatal("RunChain() should return error when context is cancelled")
+	}
+	if !errors.Is(err, context.Canceled) {
+		t.Errorf("RunChain() error = %v, want context.Canceled", err)
+	}
+	select {
+	case <-step2Called:
+		t.Error("RunChain() should not execute steps after cancellation")
+	default:
+	}
+}
+
 func TestRunChain_Empty(t *testing.T) {
 	runner := NewRunner()
 

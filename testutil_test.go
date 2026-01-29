@@ -245,8 +245,18 @@ func (m *mockIndex) Search(_ string, _ int) ([]toolindex.Summary, error) {
 	return nil, nil
 }
 
+func (m *mockIndex) SearchPage(query string, limit int, _ string) ([]toolindex.Summary, string, error) {
+	results, err := m.Search(query, limit)
+	return results, "", err
+}
+
 func (m *mockIndex) ListNamespaces() ([]string, error) {
 	return nil, nil
+}
+
+func (m *mockIndex) ListNamespacesPage(_ int, _ string) ([]string, string, error) {
+	results, err := m.ListNamespaces()
+	return results, "", err
 }
 
 // -----------------------------------------------------------------------------
