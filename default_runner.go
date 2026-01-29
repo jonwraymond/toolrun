@@ -77,6 +77,9 @@ func (r *DefaultRunner) Run(ctx context.Context, toolID string, args map[string]
 
 // RunStream executes a tool with streaming support.
 func (r *DefaultRunner) RunStream(ctx context.Context, toolID string, args map[string]any) (<-chan StreamEvent, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	if toolID == "" {
 		return nil, WrapError(toolID, nil, "validate_tool_id", ErrInvalidToolID)
 	}
