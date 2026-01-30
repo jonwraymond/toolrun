@@ -5,6 +5,16 @@ import "context"
 // Runner is the main execution interface for running tools.
 // It provides methods for single tool execution, streaming execution,
 // and sequential chain execution.
+//
+// Contract:
+// - Concurrency: implementations must be safe for concurrent use.
+// - Context: must honor cancellation/deadlines and return ctx.Err() when canceled.
+// - Errors: failures should be wrapped with ToolError; callers use errors.Is
+//   to match ErrInvalidToolID, ErrToolNotFound, ErrValidation, ErrExecution,
+//   ErrOutputValidation, and ErrStreamNotSupported.
+// - Ownership: args are treated as read-only; results are caller-owned snapshots.
+// - Determinism: for identical inputs/backends, results should be stable.
+// - Nil/zero: empty toolID must return ErrInvalidToolID; nil args treated as empty.
 type Runner interface {
 	// Run executes a single tool and returns the normalized result.
 	// It resolves the tool, validates input, executes via the appropriate backend,
@@ -31,6 +41,12 @@ type ProgressCallback func(ProgressEvent)
 
 // ProgressRunner is an optional interface that provides progress callbacks
 // for long-running tool executions and chains.
+//
+// Contract:
+// - Concurrency: implementations must be safe for concurrent use.
+// - Context: must honor cancellation/deadlines and return ctx.Err() when canceled.
+// - Progress: callbacks must be invoked in-order; nil callbacks are allowed.
+// - Errors: follow Runner error semantics for underlying execution.
 type ProgressRunner interface {
 	// RunWithProgress executes a single tool and emits progress updates.
 	RunWithProgress(ctx context.Context, toolID string, args map[string]any, onProgress ProgressCallback) (RunResult, error)

@@ -18,6 +18,15 @@ type ProgressRunner interface {
 type ProgressCallback func(ProgressEvent)
 ```
 
+### Runner contract
+
+- Concurrency: implementations are safe for concurrent use.
+- Context: methods honor cancellation/deadlines and return `ctx.Err()` when canceled.
+- Errors: use `errors.Is` with `ErrInvalidToolID`, `ErrToolNotFound`, `ErrValidation`,
+  `ErrExecution`, `ErrOutputValidation`, and `ErrStreamNotSupported`.
+- Ownership: args are read-only; returned results are caller-owned snapshots.
+- Determinism: identical inputs over stable backends should yield stable results.
+
 ## Config
 
 ```go
@@ -53,6 +62,12 @@ type LocalRegistry interface {
 }
 ```
 
+### Executor contracts
+
+- MCPExecutor/ProviderExecutor must return `ErrStreamNotSupported` for unsupported streaming.
+- If streaming is supported and error is nil, the returned channel must be non-nil.
+- LocalRegistry must return `(nil, false)` for unknown names.
+
 ## Results
 
 ```go
@@ -83,7 +98,8 @@ type StreamEvent struct {
 
 ## Errors
 
-- `ErrNotFound`
+- `ErrToolNotFound`
+- `ErrInvalidToolID`
 - `ErrNoBackends`
 - `ErrValidation`
 - `ErrOutputValidation`
