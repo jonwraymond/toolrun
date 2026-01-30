@@ -1,26 +1,147 @@
+# toolrun User Journey
+# Tool execution with backend dispatch
+
 direction: down
 
-style: { font-size: 14 }
+vars: {
+  d2-config: {
+    layout-engine: elk
+    theme-id: 0
+  }
+  execution-fill: "#38a169"
+  discovery-fill: "#3182ce"
+  surface-fill: "#2b6cb0"
+  backend-fill: "#805ad5"
+  actor-fill: "#e2e8f0"
+}
 
-agent: "Agent" { shape: oval }
+classes: {
+  actor: {
+    style: {
+      fill: ${actor-fill}
+      stroke: "#a0aec0"
+      stroke-width: 2
+      font-color: "#1a202c"
+      bold: true
+    }
+  }
+  execution: {
+    style: {
+      fill: ${execution-fill}
+      stroke: "#276749"
+      stroke-width: 2
+      font-color: "#fff"
+      shadow: true
+    }
+  }
+  discovery: {
+    style: {
+      fill: ${discovery-fill}
+      stroke: "#2c5282"
+      stroke-width: 2
+      font-color: "#fff"
+    }
+  }
+  surface: {
+    style: {
+      fill: ${surface-fill}
+      stroke: "#1a365d"
+      stroke-width: 2
+      font-color: "#fff"
+    }
+  }
+  backend: {
+    style: {
+      fill: ${backend-fill}
+      stroke: "#6b46c1"
+      stroke-width: 2
+      font-color: "#fff"
+    }
+  }
+  request-flow: {
+    style: {
+      stroke: ${surface-fill}
+      stroke-width: 2
+    }
+  }
+  exec-flow: {
+    style: {
+      stroke: ${execution-fill}
+      stroke-width: 2
+    }
+  }
+  result-flow: {
+    style: {
+      stroke: "#718096"
+      stroke-width: 2
+      stroke-dash: 3
+    }
+  }
+}
 
-metatools: "metatools-mcp" {
+# Title
+title: "toolrun - Execution Engine" {
+  shape: text
+  near: top-center
+  style: {
+    font-size: 24
+    bold: true
+    font-color: "#1a365d"
+  }
+}
+
+# Actors
+agent: "🤖 Agent" {
+  shape: person
+  class: actor
+}
+
+# Components
+metatools: "🔷 metatools-mcp\nMCP Surface" {
   shape: hexagon
+  class: surface
 }
 
-index: "toolindex" { shape: cylinder }
-
-runner: "toolrun" {
+runner: "▶️ toolrun\nExecution" {
   shape: step
-  style: { shadow: true }
+  class: execution
 }
 
-backend: "MCP Server" { shape: cloud }
+index: "🗂️ toolindex\nResolve Tool" {
+  shape: cylinder
+  class: discovery
+}
 
-agent -> metatools: "run_tool(tool_id, args)"
-metatools -> runner: "Run"
-runner -> index: "Resolve tool + backend"
-runner -> backend: "Call tool"
-backend -> runner: "Result"
-runner -> metatools: "Structured result"
-metatools -> agent: "Tool output"
+backend: "☁️ MCP Server\nBackend" {
+  shape: cloud
+  class: backend
+}
+
+# Flow
+agent -> metatools: "run_tool(tool_id, args)" {
+  class: request-flow
+}
+
+metatools -> runner: "Run" {
+  class: request-flow
+}
+
+runner -> index: "Resolve tool + backend" {
+  class: exec-flow
+}
+
+runner -> backend: "Call tool" {
+  class: exec-flow
+}
+
+backend -> runner: "Result" {
+  class: result-flow
+}
+
+runner -> metatools: "Structured result" {
+  class: result-flow
+}
+
+metatools -> agent: "Tool output" {
+  class: result-flow
+}
