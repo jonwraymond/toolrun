@@ -1,141 +1,19 @@
 # toolrun
 
-[![Docs](https://img.shields.io/badge/docs-ai--tools--stack-blue)](https://jonwraymond.github.io/ai-tools-stack/)
+> **DEPRECATED**: This repository has been deprecated and merged into `toolexec`.
+>
+> Please use [`github.com/jonwraymond/toolexec/run`](https://github.com/jonwraymond/toolexec) instead.
 
-`toolrun` is the execution layer for tools defined in `toolmodel` and resolved
-via `toolindex`.
+## Migration
 
-It:
-- resolves a canonical tool ID to a tool definition + backends,
-- validates inputs and outputs against JSON Schema (on by default),
-- dispatches across `mcp`, `provider`, and `local` backends,
-- normalizes results into a consistent `RunResult`, and
-- supports sequential chains with explicit data passing.
+See [MIGRATION.md](./MIGRATION.md) for import path changes.
 
-## Install
+## Timeline
 
-```bash
-go get github.com/jonwraymond/toolrun
-```
-
-## Changelog
-
-See `CHANGELOG.md` for release notes.
-
-## Quick start
-
-Define a tool, register it in `toolindex`, and execute it locally:
-
-```go
-import (
-  "context"
-  "fmt"
-  "log"
-
-  "github.com/jonwraymond/toolindex"
-  "github.com/jonwraymond/toolmodel"
-  "github.com/jonwraymond/toolrun"
-  "github.com/modelcontextprotocol/go-sdk/mcp"
-)
-
-// Minimal LocalRegistry implementation.
-type localMap map[string]toolrun.LocalHandler
-func (m localMap) Get(name string) (toolrun.LocalHandler, bool) {
-  h, ok := m[name]
-  return h, ok
-}
-
-idx := toolindex.NewInMemoryIndex()
-
-t := toolmodel.Tool{
-  Namespace: "math",
-  Tool: mcp.Tool{
-    Name:        "add",
-    Description: "Add two integers",
-    InputSchema: map[string]any{
-      "type": "object",
-      "properties": map[string]any{
-        "a": {"type": "integer"},
-        "b": {"type": "integer"},
-      },
-      "required": []string{"a", "b"},
-    },
-    OutputSchema: map[string]any{
-      "type": "object",
-      "properties": map[string]any{
-        "sum": {"type": "integer"},
-      },
-      "required": []string{"sum"},
-    },
-  },
-}
-
-backend := toolmodel.ToolBackend{
-  Kind:  toolmodel.BackendKindLocal,
-  Local: &toolmodel.LocalBackend{Name: "math.add"},
-}
-_ = idx.RegisterTool(t, backend)
-
-locals := localMap{
-  "math.add": func(ctx context.Context, args map[string]any) (any, error) {
-    a := args["a"].(int)
-    b := args["b"].(int)
-    return map[string]any{"sum": a + b}, nil
-  },
-}
-
-runner := toolrun.NewRunner(
-  toolrun.WithIndex(idx),
-  toolrun.WithLocalRegistry(locals),
-)
-
-result, err := runner.Run(ctx, "math:add", map[string]any{
-  "a": 2,
-  "b": 3,
-})
-if err != nil {
-  log.Fatal(err)
-}
-
-fmt.Println(result.Structured)
-```
-
-## Chain semantics
-
-`RunChain` executes steps in order and stops on the first error.
-
-When `usePrevious` is true, the prior step's structured result is injected at
-`args["previous"]` (even when the prior result is nil).
-
-All runner methods check `context.Context` and pass it through to backends.
-Cancellation/timeout behavior ultimately depends on backend support (local
-handlers, MCP servers, or provider executors must respect the context).
-
-## Streaming contract
-
-`RunStream` is executor-defined. If streaming is unsupported, it returns
-`ErrStreamNotSupported`.
-
-Executor contract:
-- if `err == nil`, the returned channel must be non-nil
-- events missing `ToolID` are stamped by the runner
-
-## Integration notes
-
-- Backend selection defaults to `toolindex.DefaultBackendSelector`
-  (`local > provider > mcp`).
-- Resolution can be injected via `WithToolResolver` and `WithBackendsResolver`
-  when you do not want a hard dependency on `toolindex`.
+- This repository will remain available for existing dependencies.
+- No new features or bug fixes will be added here.
+- All development continues in `toolexec/run`.
 
 ## Documentation
 
-- `docs/index.md` — overview
-- `docs/design-notes.md` — tradeoffs and error semantics
-- `docs/user-journey.md` — end-to-end agent workflow
-
-## Version compatibility
-
-See `VERSIONS.md` for the authoritative, auto-generated compatibility matrix.
-
-
-MCP protocol target: `2025-11-25` (via `toolmodel.MCPVersion`).
+For up-to-date documentation, see the [toolexec docs](https://jonwraymond.github.io/ai-tools-stack/).
